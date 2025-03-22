@@ -1,8 +1,12 @@
 const express = require('express');
 const app = express();
-require('dotenv').config()
+const transactionRouter = require('./routes/transactionRoutes')
 
+require('dotenv').config()
 require('./config/db')
+
+app.use(express.json())
+app.use('/api/transactions',transactionRouter);
 
 app.get("/",(req,res)=>{
   res.send('hello word')
