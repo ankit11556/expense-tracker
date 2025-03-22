@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 require('dotenv').config()
 
+require('./config/db')
+
 app.get("/",(req,res)=>{
   res.send('hello word')
 })
