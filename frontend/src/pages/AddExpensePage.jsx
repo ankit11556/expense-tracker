@@ -26,7 +26,7 @@ const AddExpensePage = () => {
           <label htmlFor="type" className="block text-gray-700">Select Type</label>
           <select
             name="type"
-            id="type"
+           
             className="w-full p-2 border border-gray-300 rounded mt-1"
           >
             <option value="income">Income</option>
