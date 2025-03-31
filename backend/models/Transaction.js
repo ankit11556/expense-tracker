@@ -19,7 +19,8 @@ const transactionSchema = new mongoose.Schema({
     default: Date.now
   },
   note: {
-    type: String
+    type: String,
+    default: "-"
   },
   
 },{timestamps:true});

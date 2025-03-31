@@ -1,12 +1,37 @@
+import { useState } from "react";
+import { postTransactions } from "../services/Api";
+import {useNavigate} from "react-router-dom"
 const AddExpensePage = () => {
+  
+  const navigate = useNavigate()
+
+  const [amount,setAmount] = useState();
+  const [category,setCategory] = useState("");
+  const [type,setType] = useState("Income")
+  const [date,setDate] = useState("");
+  const [note,setNote] = useState("");
+
+  const handleSubmit =  async (e) => {
+    e.preventDefault()
+    try {
+      const response = await postTransactions({amount,category,type,date,note})
+      alert(response.data.message)
+    navigate("/")
+    } catch (error) {
+      alert(error.response?.data?.error)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <form className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Add Expense</h2>
 
         <div className="mb-4">
           <label className="block text-gray-700">Amount</label>
           <input
+          value={amount}
+          onChange={(e)=>setAmount(e.target.value)}
             type="number"
             placeholder="Enter amount"
             className="w-full p-2 border border-gray-300 rounded mt-1"
@@ -16,6 +41,8 @@ const AddExpensePage = () => {
         <div className="mb-4">
           <label className="block text-gray-700">Category</label>
           <input
+          value={category}
+          onChange={(e)=>setCategory(e.target.value)}
             type="text"
             placeholder="Enter category"
             className="w-full p-2 border border-gray-300 rounded mt-1"
@@ -25,18 +52,21 @@ const AddExpensePage = () => {
         <div className="mb-4">
           <label htmlFor="type" className="block text-gray-700">Select Type</label>
           <select
+          value={type}
+          onChange={(e)=> setType(e.target.value)}
             name="type"
-           
             className="w-full p-2 border border-gray-300 rounded mt-1"
           >
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
+            <option value="Income">Income</option>
+            <option value="Expense">Expense</option>
           </select>
         </div>
 
         <div className="mb-4">
           <label className="block text-gray-700">Date</label>
           <input
+          value={date}
+          onChange={(e)=>setDate(e.target.value)}
             type="date"
             className="w-full p-2 border border-gray-300 rounded mt-1"
           />
@@ -45,6 +75,8 @@ const AddExpensePage = () => {
         <div className="mb-4">
           <label className="block text-gray-700">Note</label>
           <input
+          value={note}
+          onChange={(e)=>setNote(e.target.value)}
             type="text"
             placeholder="Add a note (optional)"
             className="w-full p-2 border border-gray-300 rounded mt-1"

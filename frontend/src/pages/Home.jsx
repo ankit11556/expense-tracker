@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { getTransactions } from "../services/Api"
+import { deleteTransaction, getTransactions } from "../services/Api"
 
 const Home = () =>{
   const [transactions,setTransactions] = useState([]);
@@ -7,56 +7,80 @@ const Home = () =>{
   const fetchData = async () => {
     try {
       const response = await getTransactions()
-      setTransactions(response.data);
-      console.log(response.data);
-      console.log(response);
-      
+      setTransactions(response.data);    
     } catch (error) {
-      console.log(response.message);
-      
+      console.log(error.response?.data?.error);
     }
   }
+
+const handleDelete = async (id) =>{
+  try {
+    const response = await deleteTransaction(id);
+    alert(response.data.message);
+    const transaction_Delete = transactions.filter((transaction)=> transaction._id !== id)
+    setTransactions(transaction_Delete)
+  } catch (error) {
+    
+  }
+}
   
   useEffect(()=>{
   fetchData()
   },[])
 
   const income = transactions
-  .filter((transaction)=>transaction.type == 'income')
+  .filter((transaction)=>transaction.type == 'Income')
   .reduce((acc,transaction) => acc + transaction.amount,0)
 
   const expense = transactions
-  .filter((transaction)=> transaction.type == 'expense')
+  .filter((transaction)=> transaction.type == 'Expense')
   .reduce((acc,transaction)=> acc + transaction.amount,0)
   
   const totalBalance = income - expense;
   return(
-    <div className="min-h-screen p-8 bg-gray-100">
+    <div className="min-h-screen p-8 bg-gray-100 ">
       <div  className="mb-8">
         <h1 className="text-3xl font-bold">Total Balance: ₹{totalBalance}</h1>
       </div>
+
       <div  className="mt-4 flex justify-between">
         <p className="text-green-600 font-semibold">Income: ₹{income}</p>
         <p className="text-red-600 font-semibold">Expense: ₹{expense}</p>
       </div>
 
-        <h2 className="text-2xl font-bold mb-4">Recent Transactions</h2>
-      <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
+        <h2 className="text-2xl font-bold mb-4 ">Recent Transactions</h2>
+      <table className="w-full bg-white shadow-md rounded-lg overflow-hidden ">
         <thead className="bg-gray-200">
           <tr>
-            <th className="p-4">Date</th>
-            <th className="p-4">Amount</th>
-            <th className="p-4">Category</th>
-            <th className="p-4">Type</th>
+            <th className="p-4 text-center min-w-[120px]">Date</th>
+            <th className="p-4 text-center min-w-[120px]">Amount</th>
+            <th className="p-4 text-center min-w-[120px]">Category</th>
+            <th className="p-4 text-center min-w-[120px]">Type</th>
+            <th className="p-4">Note</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody >
       {transactions.map((transaction)=>(
          <tr key={transaction._id} className="border-b">
-          <td  className="p-4">{new Date().toLocaleDateString()}</td>
-          <td  className="p-4">₹{transaction.amount}</td>
-          <td  className="p-4">{transaction.category}</td>
-          <td  className="p-4">{transaction.type}</td>
+          <td  className="p-4 text-center">{new Date(transaction.date).toLocaleDateString('en-US')}</td>
+          <td  className="p-4 text-center ">₹{transaction.amount}</td>
+          <td  className="p-4 text-center">{transaction.category}</td>
+          <td  className="p-4 text-center">{transaction.type}</td>
+          <td  className="p-4 text-center">{transaction.note}</td>
+          <td className="p-4 flex gap-4">
+            <button
+              // onClick={handleEdit}
+              className="bg-blue-500 text-white px-2 py-2 ml-4 rounded"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => handleDelete(transaction._id)}
+              className="bg-red-500 text-white px-4 py-2 rounded"
+            >
+              Delete
+            </button>
+          </td>
         </tr>
      ) )}
      </tbody>
