@@ -12,5 +12,8 @@ export const postTransactions = async (transactionData) => {
 
 export const deleteTransaction = async (id) => {
   return await axios.delete(`${API_URL}/delete/${id}`)
+}
 
+export const updateTransaction = async (id,transactionData) => {
+  return await axios.put(`${API_URL}/edit/${id}`,transactionData)
 }

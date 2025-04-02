@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { postTransactions } from "../services/Api";
 import {useNavigate} from "react-router-dom"
+import { useLocation } from "react-router-dom";
+import { updateTransaction } from "../services/Api";
+
 const AddExpensePage = () => {
-  
   const navigate = useNavigate()
+  const location = useLocation();
 
   const [amount,setAmount] = useState();
   const [category,setCategory] = useState("");
@@ -11,11 +14,29 @@ const AddExpensePage = () => {
   const [date,setDate] = useState("");
   const [note,setNote] = useState("");
 
+const transactionToEdit = location.state?.transaction || null;
+
+useEffect(() => {
+  if (transactionToEdit) {
+    setAmount(transactionToEdit.amount);
+    setCategory(transactionToEdit.category);
+    setType(transactionToEdit.type);
+    setDate(transactionToEdit.date);
+    setNote(transactionToEdit.note);
+  }
+}, [transactionToEdit]);
+
+ 
   const handleSubmit =  async (e) => {
     e.preventDefault()
     try {
+      if (transactionToEdit) {
+        const response = await updateTransaction(transactionToEdit._id, { amount, category, type, date, note });
+        alert(response.data.message);
+      } else{
       const response = await postTransactions({amount,category,type,date,note})
       alert(response.data.message)
+      }
     navigate("/")
     } catch (error) {
       alert(error.response?.data?.error)

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react"
 import { deleteTransaction, getTransactions } from "../services/Api"
+import {useNavigate} from "react-router-dom"
 
 const Home = () =>{
   const [transactions,setTransactions] = useState([]);
-  
+  const navigate = useNavigate()
   const fetchData = async () => {
     try {
       const response = await getTransactions()
@@ -69,11 +70,12 @@ const handleDelete = async (id) =>{
           <td  className="p-4 text-center">{transaction.note}</td>
           <td className="p-4 flex gap-4">
             <button
-              // onClick={handleEdit}
-              className="bg-blue-500 text-white px-2 py-2 ml-4 rounded"
+              onClick={() => navigate("/add", { state: { transaction: transaction } })} 
+              className=  "bg-blue-500 text-white px-2 py-2 ml-4 rounded"
             >
               Edit
             </button>
+
             <button
               onClick={() => handleDelete(transaction._id)}
               className="bg-red-500 text-white px-4 py-2 rounded"
