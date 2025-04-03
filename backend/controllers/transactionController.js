@@ -2,13 +2,13 @@ const Transaction = require("../models/Transaction");
 
 exports.createTransaction = async (req,res) => {
   try {
-    const { amount, category, type, note } = req.body;
+    const { amount, category, type, date,note } = req.body;
 
     if(!amount || !category || !type){
        return res.status(400).json({message: 'Please fill all required fields.'})
     }
 
-    const newTransaction = new Transaction({amount, category, type, note});
+    const newTransaction = new Transaction({amount, category, type, date,note});
     await newTransaction.save()
     res.status(201).json({message: 'Transaction added successfully!',newTransaction})
   } catch (error) {
@@ -28,7 +28,7 @@ exports.getTransaction = async (req,res) => {
 exports.editTransaction = async (req,res) => {
   try {
     const {id} = req.params;
-    const { amount, category, type, note } = req.body;
+    const { amount, category, type, date, note } = req.body;
 
    const edit = await Transaction.findByIdAndUpdate(
     id,
@@ -40,7 +40,7 @@ exports.editTransaction = async (req,res) => {
     return res.status(404).json({ error: 'Transaction not found' });
   }
 
-  res.json({ message: 'Transaction updated successfully', edit });
+  res.status(200).json({ message: 'Transaction updated successfully', edit });
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

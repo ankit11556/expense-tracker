@@ -8,6 +8,7 @@ const AddExpensePage = () => {
   const navigate = useNavigate()
   const location = useLocation();
 
+
   const [amount,setAmount] = useState();
   const [category,setCategory] = useState("");
   const [type,setType] = useState("Income")
@@ -15,6 +16,7 @@ const AddExpensePage = () => {
   const [note,setNote] = useState("");
 
 const transactionToEdit = location.state?.transaction || null;
+
 
 useEffect(() => {
   if (transactionToEdit) {
