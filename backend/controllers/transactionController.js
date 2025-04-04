@@ -32,7 +32,7 @@ exports.editTransaction = async (req,res) => {
 
    const edit = await Transaction.findByIdAndUpdate(
     id,
-    { amount, category, type, note },
+    { amount, category, type, date, note},
     {new: true, runValidators: true}
    );
 

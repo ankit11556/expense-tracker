@@ -50,14 +50,15 @@ const handleDelete = async (id) =>{
       </div>
 
         <h2 className="text-2xl font-bold mb-4 ">Recent Transactions</h2>
-      <table className="w-full bg-white shadow-md rounded-lg overflow-hidden ">
-        <thead className="bg-gray-200">
-          <tr>
+        <div className="w-full flex justify-center flex-col">
+      <table className="w-auto bg-white shadow-md rounded-lg overflow-hidden">
+        <thead className="bg-gray-200 ">
+          <tr className="">
             <th className="p-4 text-center min-w-[120px]">Date</th>
             <th className="p-4 text-center min-w-[120px]">Amount</th>
             <th className="p-4 text-center min-w-[120px]">Category</th>
             <th className="p-4 text-center min-w-[120px]">Type</th>
-            <th className="p-4">Note</th>
+            <th className="p-4 text-center min-w-[120px]">Note</th>
           </tr>
         </thead>
         <tbody >
@@ -68,17 +69,18 @@ const handleDelete = async (id) =>{
           <td  className="p-4 text-center">{transaction.category}</td>
           <td  className="p-4 text-center">{transaction.type}</td>
           <td  className="p-4 text-center">{transaction.note}</td>
+          
           <td className="p-4 flex gap-4">
             <button
               onClick={() => navigate("/add", { state: { transaction: transaction } })} 
-              className=  "bg-blue-500 text-white px-2 py-2 ml-4 rounded"
+              className=  "bg-blue-500 text-white px-2 py-2 ml-4 rounded hover:cursor-pointer hover:bg-blue-400"
             >
               Edit
             </button>
 
             <button
               onClick={() => handleDelete(transaction._id)}
-              className="bg-red-500 text-white px-4 py-2 rounded"
+              className="bg-red-500 text-white px-4 py-2 rounded hover:cursor-pointer hover:bg-red-400"
             >
               Delete
             </button>
@@ -87,6 +89,7 @@ const handleDelete = async (id) =>{
      ) )}
      </tbody>
       </table>
+      </div>
     </div>
   )
 }

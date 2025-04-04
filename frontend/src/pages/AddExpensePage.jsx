@@ -99,6 +99,7 @@ useEffect(() => {
           <label className="block text-gray-700">Note</label>
           <input
           value={note}
+          
           onChange={(e)=>setNote(e.target.value)}
             type="text"
             placeholder="Add a note (optional)"
