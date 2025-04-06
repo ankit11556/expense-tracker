@@ -15,7 +15,10 @@ const Navbar = () =>{
       <Link to="/total">Total Balance</Link>
     </li>
   </ul>
-
+<div className="gap-4 flex">
+  <button><Link to="/signup">SignUp</Link></button>
+  <button><Link to="/login">Login</Link></button>
+</div>
 </nav>
   )
 }
