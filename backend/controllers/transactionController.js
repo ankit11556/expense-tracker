@@ -8,7 +8,7 @@ exports.createTransaction = async (req,res) => {
        return res.status(400).json({message: 'Please fill all required fields.'})
     }
 
-    const newTransaction = new Transaction({amount, category, type, date,note});
+    const newTransaction = new Transaction({amount, category, type, date,note, userId: req.user.userId});
     await newTransaction.save()
     res.status(201).json({message: 'Transaction added successfully!',newTransaction})
   } catch (error) {
@@ -18,7 +18,7 @@ exports.createTransaction = async (req,res) => {
 
 exports.getTransaction = async (req,res) => {
  try {
-  const transactions = await Transaction.find()
+  const transactions = await Transaction.find({ userId: req.user.userId })
   res.status(200).json(transactions)
  } catch (error) {
   res.status(500).json({ message: 'Error fetching transactions', error: error.message });
@@ -31,7 +31,7 @@ exports.editTransaction = async (req,res) => {
     const { amount, category, type, date, note } = req.body;
 
    const edit = await Transaction.findByIdAndUpdate(
-    id,
+    { _id: id, userId: req.user.userId },
     { amount, category, type, date, note},
     {new: true, runValidators: true}
    );
@@ -49,7 +49,7 @@ exports.editTransaction = async (req,res) => {
 exports.deleteTransaction = async (req,res) => {
   try {
     const {id} = req.params;
-    const delete_Transaction = await Transaction.findByIdAndDelete(id);
+    const delete_Transaction = await Transaction.findByIdAndDelete({ _id: id, userId: req.user.userId });
 
     if (!delete_Transaction) {
       return res.status(404).json({ message: 'Transaction not found' });

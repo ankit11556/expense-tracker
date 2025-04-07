@@ -3,11 +3,16 @@ const app = express();
 const cors = require('cors')
 const transactionRouter = require('./routes/transactionRoutes')
 const authRouter = require('./routes/authRoutes')
+const cookieParser = require("cookie-parser");
 
 require('dotenv').config()
 require('./config/db')
 
-app.use(cors())
+app.use(cookieParser())
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  credentials: true
+}))
 app.use(express.json())
 
 app.use('/api/auth',authRouter)

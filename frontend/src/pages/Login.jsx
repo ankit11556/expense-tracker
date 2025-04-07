@@ -1,4 +1,24 @@
+import { useState } from "react";
+import { loginUser } from "../services/authApi";
+
 const Login = () =>{
+  const [user, setUser] = useState({
+    email: "",
+    password: ""
+  });
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit= async (e) => {
+    e.preventDefault();
+   try {
+    const response = await loginUser(user)
+    alert(response.data.message)
+   } catch (error) {
+    alert(error.response?.data?.error || "Login failed");
+   }
+  }
   return(
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
     <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-full max-w-md">
