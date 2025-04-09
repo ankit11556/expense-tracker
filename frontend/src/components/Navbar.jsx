@@ -6,15 +6,18 @@ const Navbar = () =>{
 
   <ul className="flex gap-4 text-lg font-serif font-normal">
     <li className="hover:bg-[#006666] p-2 rounded">
-      <Link to="/">Home</Link>
-    </li>
-    <li className="hover:bg-[#006666] p-2 rounded">
       <Link to="/add">Add Expense</Link>
     </li>
+
+    <li className="hover:bg-[#006666] p-2 rounded">
+      <Link to="/all-transactions">All Transactions</Link>
+    </li>
+
     <li className="hover:bg-[#006666] p-2 rounded">
       <Link to="/total">Total Balance</Link>
     </li>
   </ul>
+
 <div className="gap-4 flex">
   <button><Link to="/signup">SignUp</Link></button>
   <button><Link to="/login">Login</Link></button>

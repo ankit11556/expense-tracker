@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { deleteTransaction, getTransactions } from "../services/Api"
 import {useNavigate} from "react-router-dom"
 
-const Home = () =>{
+const AllTransactions = () =>{
   const [transactions,setTransactions] = useState([]);
   const navigate = useNavigate()
   const fetchData = async () => {
@@ -94,4 +94,4 @@ const handleDelete = async (id) =>{
   )
 }
 
-export default Home
+export default AllTransactions

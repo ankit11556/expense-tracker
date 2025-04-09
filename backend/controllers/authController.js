@@ -17,8 +17,27 @@ exports.registerUser = async (req,res) => {
     const newUser = new User({name, email, password: hashedPassword});
 
     await newUser.save();
+  
+    //token generate
+    const token = jwt.sign(
+      {userId: newUser._id, name: newUser.name},
+      process.env.JWT_KEY,
+      {expiresIn: '7d'}
+    );
 
-    res.status(201).json({message: "User registered successfully"})
+    res.cookie("token",token,{
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    })
+    res.status(201).json({message: "User registered successfully",
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email
+      }
+    })
   } catch (error) {
     res.status(500).json({ error: "Something went wrong" });
   }
