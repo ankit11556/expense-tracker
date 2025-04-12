@@ -1,25 +1,32 @@
 import { useState } from "react"
 import { createRegister } from "../services/authApi"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../context/AuthContext";
 
 const Register = () =>{
-  const [user,setUser] = useState({
+
+  const navigate = useNavigate();
+
+  const [signupForm,setSignupForm] = useState({
     name: "",
     email: "",
     password: ""
   })
-
+const {setUser} = useAuth()
   const handleChange = (e) =>{ 
-    setUser({...user,[e.target.name]:e.target.value});       
+    setSignupForm({...signupForm,[e.target.name]:e.target.value});       
   }                                                               //const { name, value } = e.target;
-                                                                   //setUser({ ...user, [name]: value });
+                                                                   //setSignupForm({ ...signupForm, [name]: value });
 
     const handleSubmit = async (e) =>{
     e.preventDefault()
     try {
-      const response = await createRegister(user)
+      const response = await createRegister(signupForm)
+      setUser(response.data)
       alert(response.data.message)
+      navigate("/add")
     } catch (error) {
-      console.log(error.response?.data?.error || "Something went wrong");
+      alert(error.response?.data?.error || "Something went wrong");
     }
   }
 
@@ -30,7 +37,7 @@ const Register = () =>{
 
         <input type="text" placeholder="Name" 
         name="name"
-        value={user.name}
+        value={signupForm.name}
         onChange={handleChange}
         className="w-full p-2 mb-4 border rounded" 
         required
@@ -38,7 +45,7 @@ const Register = () =>{
 
         <input type="text" placeholder="Email" 
          name="email"
-        value={user.email}
+        value={signupForm.email}
         onChange={handleChange}
         className="w-full p-2 mb-4 border rounded" 
         required 
@@ -47,7 +54,7 @@ const Register = () =>{
         <input type="password" placeholder="Password" 
         name="password"
         className="w-full p-2 mb-4 border rounded" 
-        value={user.password}
+        value={signupForm.password}
         onChange={handleChange}
         required/>
 

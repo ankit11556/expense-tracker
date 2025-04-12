@@ -52,6 +52,7 @@ const Login = () =>{
       <button className="w-full bg-[#008080] text-white p-2 rounded" type="submit">
         Login
       </button>
+      
     </form>
   </div>
   )

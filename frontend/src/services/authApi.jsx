@@ -14,7 +14,7 @@ return await axios.post(`${API_URL}/auth/login`,userData,{
 }
 
 export const getCurrentUser = async () => {
-   return await axios.get(`${API_URL/user/me}`,{
+   return await axios.get(`${API_URL}/user/me`,{
       withCredentials: true,
    })
 }

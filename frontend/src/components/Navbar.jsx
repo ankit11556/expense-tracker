@@ -30,7 +30,7 @@ const Navbar = () =>{
   {user ? (
         <button>Logout</button>
       ) : (
-        <button to="/login">Login</button>
+        <button ><Link to="/login">Login</Link></button>
       )}
 </div>
 </nav>
