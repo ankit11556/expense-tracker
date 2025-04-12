@@ -39,7 +39,7 @@ useEffect(() => {
       const response = await postTransactions({amount,category,type,date,note})
       alert(response.data.message)
       }
-    navigate("/")
+    navigate("/all-transactions")
     } catch (error) {
       alert(error.response?.data?.error)
     }

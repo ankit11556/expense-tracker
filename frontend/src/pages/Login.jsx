@@ -1,20 +1,25 @@
 import { useState } from "react";
 import { loginUser } from "../services/authApi";
-
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 const Login = () =>{
-  const [user, setUser] = useState({
+  const navigate = useNavigate()
+  const [form, setform] = useState({
     email: "",
     password: ""
   });
+   const {setUser} = useAuth();
   const handleChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
+    setform({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit= async (e) => {
     e.preventDefault();
    try {
-    const response = await loginUser(user)
+    const response = await loginUser(form)
+    setUser(response.data)
     alert(response.data.message)
+    navigate("/add")
    } catch (error) {
     alert(error.response?.data?.error || "Login failed");
    }
@@ -28,7 +33,7 @@ const Login = () =>{
         type="email"
         placeholder="Email"
         name="email"
-        value={user.email}
+        value={form.email}
         onChange={handleChange}
         className="w-full p-2 mb-4 border rounded"
         required
@@ -38,7 +43,7 @@ const Login = () =>{
         type="password"
         placeholder="Password"
         name="password"
-        value={user.password}
+        value={form.password}
         onChange={handleChange}
         className="w-full p-2 mb-4 border rounded"
         required
