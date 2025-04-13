@@ -106,13 +106,19 @@ useEffect(() => {
             className="w-full p-2 border border-gray-300 rounded mt-1"
           />
         </div>
-
+        {transactionToEdit ? (<button
+          type="submit"
+          className="w-full bg-[#008080] text-white p-2 rounded hover:bg-[#006666] hover:cursor-pointer"
+        >
+          Edit Expense
+        </button>):(
         <button
           type="submit"
           className="w-full bg-[#008080] text-white p-2 rounded hover:bg-[#006666] hover:cursor-pointer"
         >
           Add Expense
         </button>
+)}
       </form>
     </div>
   );

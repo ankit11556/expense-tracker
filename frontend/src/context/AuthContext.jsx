@@ -10,7 +10,7 @@ export const AuthProvider = ({children})=>{
   const navigate = useNavigate()
 
   const [user,setUser] = useState(null);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -18,6 +18,8 @@ export const AuthProvider = ({children})=>{
         setUser(res.data);
       } catch (err) {
         setUser(null);
+      } finally{
+        setLoading(false)
       }
     };
 
@@ -33,7 +35,7 @@ export const AuthProvider = ({children})=>{
   }
 
 return(
-  <AuthContext.Provider value={{user,setUser,logout}}>
+  <AuthContext.Provider value={{user,setUser,logout,loading}}>
     {children}
   </AuthContext.Provider>
 )
