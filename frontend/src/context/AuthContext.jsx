@@ -1,9 +1,14 @@
 import { useContext } from "react";
 import { createContext, useState,useEffect }  from "react";
-import { getCurrentUser } from "../services/authApi";
+import { getCurrentUser, logoutUser } from "../services/authApi";
+import {useNavigate} from "react-router-dom"
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({children})=>{
+
+  const navigate = useNavigate()
+
   const [user,setUser] = useState(null);
 
   useEffect(() => {
@@ -19,8 +24,16 @@ export const AuthProvider = ({children})=>{
     fetchUser();
   }, []);
 
+  const logout = () =>{
+    setUser(null)
+
+   logoutUser()
+
+   navigate("/login")
+  }
+
 return(
-  <AuthContext.Provider value={{user,setUser}}>
+  <AuthContext.Provider value={{user,setUser,logout}}>
     {children}
   </AuthContext.Provider>
 )

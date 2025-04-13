@@ -78,3 +78,8 @@ exports.loginUser = async (req,res) => {
     res.status(500).json({ error: "Login failed" });
   }
 }
+
+exports.logoutUser =  (req,res) => {
+  res.clearCookie("token",{httpOnly:true});
+  res.status(200).send("Logged out successfylly")
+}

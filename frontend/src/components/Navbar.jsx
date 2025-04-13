@@ -1,7 +1,7 @@
 import {Link} from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 const Navbar = () =>{
-  const {user} = useAuth()
+  const {user,logout} = useAuth()
   return(
 <nav className="bg-[#008080] text-[#F5F5DC] p-4 flex justify-between itmes-center">
 <h1 className="text-2xl font-bold">Expense Tracker</h1>
@@ -28,7 +28,7 @@ const Navbar = () =>{
 <div className="gap-4 flex">
   <button><Link to="/signup">SignUp</Link></button>
   {user ? (
-        <button>Logout</button>
+        <button onClick={logout}>Logout</button>
       ) : (
         <button ><Link to="/login">Login</Link></button>
       )}

@@ -18,3 +18,13 @@ export const getCurrentUser = async () => {
       withCredentials: true,
    })
 }
+
+export const logoutUser = async () => {
+   try {
+      await axios.post(`${API_URL}/auth/logout`,{},{
+         withCredentials: true
+      })
+   } catch (error) {
+      
+   }
+}
