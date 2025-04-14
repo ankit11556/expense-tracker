@@ -1,6 +1,7 @@
 const express = require('express')
 const verifyToken = require('../middlewares/verifyToken')
 const userRouter = express.Router();
+const {verifyOtp} = require('../controllers/authController')
 const User = require('../models/User')
 
 userRouter.get("/me",verifyToken.verifyToken,async (req,res) => {
@@ -12,4 +13,6 @@ userRouter.get("/me",verifyToken.verifyToken,async (req,res) => {
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
 })
+
+userRouter.post("/verify",verifyOtp)
 module.exports = userRouter

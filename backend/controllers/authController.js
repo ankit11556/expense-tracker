@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const sendEmail = require('../utils/sendEmail')
 
 //Signup
 exports.registerUser = async (req,res) => {
@@ -12,12 +13,18 @@ exports.registerUser = async (req,res) => {
     return res.status(400).json({error: "Email already registered"})
     }
 
+    
     const hashedPassword = await bcrypt.hash(password,10);
 
-    const newUser = new User({name, email, password: hashedPassword});
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiry = Date.now() + 10*60*1000;
+
+    const newUser = new User({name, email, password: hashedPassword,otp,otpExpiry});
 
     await newUser.save();
   
+    await sendEmail(email, "Verify Your Email",`<h2>Your OTP is ${otp}</h2>`)
+
     //token generate
     const token = jwt.sign(
       {userId: newUser._id, name: newUser.name},
@@ -82,4 +89,34 @@ exports.loginUser = async (req,res) => {
 exports.logoutUser =  (req,res) => {
   res.clearCookie("token",{httpOnly:true});
   res.status(200).send("Logged out successfylly")
+}
+
+exports.verifyOtp = async (req,res) => {
+  try {
+    const {email,otp} = req.body
+
+    const user = await User.findOne({email});
+
+    if (!user) {
+      return res.status(404).json({error:"User not found"});
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({error: "User already verified"})
+    }
+
+    if (user.otp !== otp || usser.otpExpiry <Date.now()) {
+      return res.status(400).json({error: "invalid or expired OTP"})
+    }
+
+    user.isVerified = true;
+    user.otp = null;
+    user.otpExpiry = null;
+
+    await user.save();
+
+    res.status(200).json({message: "Email verified successfully"})
+  } catch (error) {
+    res.status(500).json({ error: "OTP verification failed" });
+  }
 }
