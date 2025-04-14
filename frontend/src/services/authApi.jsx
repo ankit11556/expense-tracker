@@ -25,6 +25,7 @@ export const logoutUser = async () => {
          withCredentials: true
       })
    } catch (error) {
+      console.log(error);
       
    }
 }

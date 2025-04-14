@@ -23,7 +23,11 @@ useEffect(() => {
     setAmount(transactionToEdit.amount);
     setCategory(transactionToEdit.category);
     setType(transactionToEdit.type);
-    setDate(transactionToEdit.date);
+
+    const localDateTime = new Date(transactionToEdit.date);
+    const dateStr = localDateTime.toISOString().slice(0, 10);
+    setDate(dateStr);
+    
     setNote(transactionToEdit.note);
   }
 }, [transactionToEdit]);

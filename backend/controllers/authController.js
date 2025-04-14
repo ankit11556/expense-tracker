@@ -22,7 +22,7 @@ exports.registerUser = async (req,res) => {
     const token = jwt.sign(
       {userId: newUser._id, name: newUser.name},
       process.env.JWT_KEY,
-      {expiresIn: '7d'}
+      {expiresIn: 30}
     );
 
     res.cookie("token",token,{
@@ -62,7 +62,7 @@ exports.loginUser = async (req,res) => {
     const token = jwt.sign(
       {userId: user._id, email: user.email},
       process.env.JWT_KEY,
-      {expiresIn: "30s"}
+      {expiresIn: 30}
     );
 
     res.
