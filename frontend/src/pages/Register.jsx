@@ -3,7 +3,7 @@ import { createRegister } from "../services/authApi"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext";
 
-const Register = () =>{
+const Regotpter = () =>{
 
   const navigate = useNavigate();
 
@@ -12,6 +12,10 @@ const Register = () =>{
     email: "",
     password: ""
   })
+  const [otpSent,setOtpSent] = useState(false);
+  const [otp,setOtp] = useState('')
+  const [otpVerified,setOtpVerified] = useState(false)
+
 const {setUser} = useAuth()
   const handleChange = (e) =>{ 
     setSignupForm({...signupForm,[e.target.name]:e.target.value});       
@@ -51,19 +55,46 @@ const {setUser} = useAuth()
         required 
         />
 
-        <input type="password" placeholder="Password" 
+        {!otpSent &&(
+          <button className="bg-[#008080] text-white p-2 rounded">Sent OTP</button>
+        )}
+
+       {otpSent && !otpVerified && (
+       <>
+         <input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)}
+         className="w-full p-2 mb-4 border rounded"
+         />
+         <button type="button" onClick={handleVerifyOtp}>Verify OTP</button>
+        </>
+        )}
+
+        {/* <input type="password" placeholder="Password" 
+        name="password"
+        className="w-full p-2 mb-4 border rounded" 
+        value={signupForm.password}
+        onChange={handleChange}
+        required/> */}
+
+
+
+        {otpVerified && (
+          <>
+          <span style={{ color: 'green' }}>Email Verified</span>
+          <input type="password" placeholder="Password" 
         name="password"
         className="w-full p-2 mb-4 border rounded" 
         value={signupForm.password}
         onChange={handleChange}
         required/>
-
         <button className="w-full bg-[#008080] text-white p-2 rounded " type="submit">
           Register
           </button>
+          </>
+          )}
+         
       </form>
     </div>
   )
 }
 
-export default Register
+export default Regotpter

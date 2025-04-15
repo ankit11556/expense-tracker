@@ -1,8 +1,9 @@
 const express = require('express')
 const verifyToken = require('../middlewares/verifyToken')
 const userRouter = express.Router();
-const {verifyOtp} = require('../controllers/authController')
+const verifyOtp = require('../controllers/authController')
 const User = require('../models/User')
+const {sendOtp} = require('../controllers/authController')
 
 userRouter.get("/me",verifyToken.verifyToken,async (req,res) => {
   try {
@@ -14,5 +15,7 @@ userRouter.get("/me",verifyToken.verifyToken,async (req,res) => {
   }
 })
 
-userRouter.post("/verify",verifyOtp)
+userRouter.post("/verify",verifyOtp.verifyOtp);
+userRouter.post("/send-otp",sendOtp)
+
 module.exports = userRouter

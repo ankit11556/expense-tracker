@@ -8,23 +8,19 @@ exports.registerUser = async (req,res) => {
   try {
     const {name, email, password} = req.body;
 
-    const existUser = await User.findOne({email})
-    if(existUser){
-    return res.status(400).json({error: "Email already registered"})
-    }
+    // const existUser = await User.findOne({email})
+    // if(existUser){
+    // return res.status(400).json({error: "Email already registered"})
+    // }
 
     
     const hashedPassword = await bcrypt.hash(password,10);
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = Date.now() + 10*60*1000;
-
-    const newUser = new User({name, email, password: hashedPassword,otp,otpExpiry});
+    const newUser = new User({name, email, password: hashedPassword});
 
     await newUser.save();
   
-    await sendEmail(email, "Verify Your Email",`<h2>Your OTP is ${otp}</h2>`)
-
+  
     //token generate
     const token = jwt.sign(
       {userId: newUser._id, name: newUser.name},
@@ -38,7 +34,7 @@ exports.registerUser = async (req,res) => {
       sameSite: "Strict",
       maxAge: 7 * 24 * 60 * 60 * 1000
     })
-    res.status(201).json({message: "User registered successfully",
+    res.status(201).json({message: "Registration Successfully.",
       user: {
         id: newUser._id,
         name: newUser.name,
@@ -48,6 +44,26 @@ exports.registerUser = async (req,res) => {
   } catch (error) {
     res.status(500).json({ error: "Something went wrong" });
   }
+}
+
+
+//send Otp
+exports.sendOtp = async (req,res) => {
+  try {
+    const {email} = req.body;
+    const existing = await User.findOne({ email });
+    if (existing) return res.status(400).json({ error: "Email already registered" });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiry = Date.now() + 10 * 60 * 1000;
+
+    await sendEmail(email,"Verify Your Email", `<h2>Your OTP is ${otp}</h2>`);
+    res.status(200).json({otp,otpExpiry,message: "OTP sent to your email"})
+  } catch (error) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to send OTP" });
+  }
+
 }
 
 //Login
@@ -91,6 +107,7 @@ exports.logoutUser =  (req,res) => {
   res.status(200).send("Logged out successfylly")
 }
 
+//verify otp
 exports.verifyOtp = async (req,res) => {
   try {
     const {email,otp} = req.body
@@ -105,7 +122,7 @@ exports.verifyOtp = async (req,res) => {
       return res.status(400).json({error: "User already verified"})
     }
 
-    if (user.otp !== otp || usser.otpExpiry <Date.now()) {
+    if (user.otp !== otp || user.otpExpiry <Date.now()) {
       return res.status(400).json({error: "invalid or expired OTP"})
     }
 
