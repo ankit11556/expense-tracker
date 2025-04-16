@@ -2,18 +2,13 @@ const User = require("../models/User");
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const sendEmail = require('../utils/sendEmail')
+const redisClient = require('../redisClient')
 
 //Signup
 exports.registerUser = async (req,res) => {
   try {
     const {name, email, password} = req.body;
-
-    // const existUser = await User.findOne({email})
-    // if(existUser){
-    // return res.status(400).json({error: "Email already registered"})
-    // }
-
-    
+ 
     const hashedPassword = await bcrypt.hash(password,10);
 
     const newUser = new User({name, email, password: hashedPassword});
@@ -56,6 +51,8 @@ exports.sendOtp = async (req,res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpiry = Date.now() + 10 * 60 * 1000;
+
+    redisClient.setex(email,otpExpiry/1000,otp);
 
     await sendEmail(email,"Verify Your Email", `<h2>Your OTP is ${otp}</h2>`);
     res.status(200).json({otp,otpExpiry,message: "OTP sent to your email"})
@@ -122,18 +119,40 @@ exports.verifyOtp = async (req,res) => {
       return res.status(400).json({error: "User already verified"})
     }
 
-    if (user.otp !== otp || user.otpExpiry <Date.now()) {
-      return res.status(400).json({error: "invalid or expired OTP"})
-    }
+    //redis
+    redisClient.get(email,(err,storedOtp)=>{
+      if(err){
+        return res.status(500).json({error: "Error fetching OTP from Redis"})
+      }
 
-    user.isVerified = true;
-    user.otp = null;
-    user.otpExpiry = null;
+      if(storedOtp){
+        return res.status(400).json({error: "OTP has expired or not found" })
+      }
 
-    await user.save();
+      if(storedOtp !== otp){
+        return res.status(400).json({error: "Invalid OTP"})
+      }
 
-    res.status(200).json({message: "Email verified successfully"})
+      user.isVerified = true;
+
+      user.otp = null;
+      user.otpExpiry = null;
+
+      user.save()
+      .then(()=>{
+        redisClient.del(email,(err)=>{
+          if(err){
+            console.error("Error deleting OTP from Redis:", err)
+          }
+        })
+        return res.status(200).json({message: "Email verified successfully" })
+      })
+      .catch((error) => {
+        return res.status(500).json({ error: "Failed to save user data" });
+      })
+    })
+
   } catch (error) {
     res.status(500).json({ error: "OTP verification failed" });
   }
-}
+};
