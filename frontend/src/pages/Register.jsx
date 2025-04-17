@@ -1,9 +1,9 @@
 import { useState } from "react"
-import { createRegister } from "../services/authApi"
+import { createRegister, sendOtp } from "../services/authApi"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext";
 
-const Regotpter = () =>{
+const Register = () =>{
 
   const navigate = useNavigate();
 
@@ -15,6 +15,21 @@ const Regotpter = () =>{
   const [otpSent,setOtpSent] = useState(false);
   const [otp,setOtp] = useState('')
   const [otpVerified,setOtpVerified] = useState(false)
+
+  const handleSendOtp = async () => {
+    try {
+      if (!signupForm.email) {
+        alert("Please enter email before sending OTP");
+        return;
+      }
+
+      const res = await sendOtp(signupForm.email);
+      alert(res.data.message);
+      setOtpSent(true);
+    } catch (error) {
+      
+    }
+  }
 
 const {setUser} = useAuth()
   const handleChange = (e) =>{ 
@@ -56,7 +71,9 @@ const {setUser} = useAuth()
         />
 
         {!otpSent &&(
-          <button className="bg-[#008080] text-white p-2 rounded">Sent OTP</button>
+          <button className="bg-[#008080] text-white p-2 rounded"
+          onClick={handleSendOtp}
+          >Sent OTP</button>
         )}
 
        {otpSent && !otpVerified && (
@@ -97,4 +114,4 @@ const {setUser} = useAuth()
   )
 }
 
-export default Regotpter
+export default Register

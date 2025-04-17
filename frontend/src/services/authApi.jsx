@@ -26,6 +26,11 @@ export const logoutUser = async () => {
       })
    } catch (error) {
       console.log(error);
-      
    }
+}
+
+export const sendOtp = async (email) => {
+   return await axios.post(`${API_URL}/auth/send-otp`,{email},{
+      withCredentials: true
+   })
 }
