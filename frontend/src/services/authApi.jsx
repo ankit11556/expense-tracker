@@ -29,8 +29,14 @@ export const logoutUser = async () => {
    }
 }
 
-export const sendOtp = async (email) => {
-   return await axios.post(`${API_URL}/auth/send-otp`,{email},{
+export const sendOtp = async (emailData) => {
+   return await axios.post(`${API_URL}/user/send-otp`,emailData,{
+      withCredentials: true
+   })
+}
+
+export const verifyOtp = async ({email,otp}) => {
+   return await axios.post(`${API_URL}/user/verify-otp`,{email,otp},{
       withCredentials: true
    })
 }

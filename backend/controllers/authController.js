@@ -52,18 +52,19 @@ exports.registerUser = async (req,res) => {
 exports.sendOtp = async (req,res) => {
   try {
     const {email} = req.body;
+  
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ error: "Email already registered" });
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = Date.now() + 10 * 60 * 1000;
+     const otpExpiry = Date.now() + 10 * 60 * 1000;
 
     redisClient.setEx(email,600,otp);
 
     await sendEmail(email,"Verify Your Email", `<h2>Your OTP is ${otp}</h2>`);
     res.status(200).json({otp,otpExpiry,message: "OTP sent to your email"})
   } catch (error) {
-    console.error(err);
+    console.error(error);
     res.status(500).json({ error: "Failed to send OTP" });
   }
 
@@ -114,14 +115,13 @@ exports.logoutUser =  (req,res) => {
 exports.verifyOtp = async (req,res) => {
   try {
     const {email,otp} = req.body
+    console.log(email,otp);
 
     //redis
-    redisClient.get(email,(err,storedOtp)=>{
-      if(err){
-        return res.status(500).json({error: "Error fetching OTP from Redis"})
-      }
+    const storedOtp = await redisClient.get(email); // Promise-style get
 
-      if(storedOtp){
+
+      if(!storedOtp){
         return res.status(400).json({error: "OTP has expired or not found" })
       }
 
@@ -129,12 +129,13 @@ exports.verifyOtp = async (req,res) => {
         return res.status(400).json({error: "Invalid OTP"})
       }
 
-      redisClient.setEx(`verified:${email}`,600,'true');
-      redisClient.del(email);
+      await redisClient.setEx(`verified:${email}`,600,'true');
+      await  redisClient.del(email);
 
-      return res.status(200).json({ message: "OTP verified successfully" });
-    });
+       res.status(200).json({ message: "OTP verified successfully" });
+    
   } catch (error) {
-    res.status(500).json({ error: "OTP verification failed" });
+    console.error("Verification Error:", error);
+    return res.status(500).json({ error: "OTP verification failed" });
   }
 };
