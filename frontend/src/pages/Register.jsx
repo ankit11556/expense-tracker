@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { createRegister, sendOtp, verifyOtp } from "../services/authApi"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext";
@@ -17,6 +17,8 @@ const Register = () =>{
   const [otpSent,setOtpSent] = useState(false);
   const [otp,setOtp] = useState('')
   const [otpVerified,setOtpVerified] = useState(false)
+  const [counter,setCounter] = useState(false)
+  const [timeLeft,setTimeLeft] = useState(120)
 
   const handleSendOtp = async () => {
     try {
@@ -28,10 +30,31 @@ const Register = () =>{
       const res = await sendOtp({email: signupForm.email});
       alert(res.data.message);
       setOtpSent(true);
+      setTimeLeft(120);     // Reset timer to 2 minutes
+      setCounter(true);
     } catch (error) {
       alert(error.response?.data?.error || "Failed to send OTP");
     }
   }
+
+  useEffect(() => {
+    if (!counter) return;
+    const countdownInterval = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(countdownInterval);
+          return 0;
+        }
+        return prevTime -1;
+      });
+    }, 1000);
+
+    return () => clearInterval(countdownInterval); // Cleanup on unmount
+  }, [counter]);
+
+const handleResendOtp = () =>{
+  handleSendOtp();
+}
 
   const handleVerifyOtp = async () => {
     try {
@@ -45,6 +68,7 @@ const Register = () =>{
 
   
 const {setUser} = useAuth()
+
   const handleChange = (e) =>{ 
     setSignupForm({...signupForm,[e.target.name]:e.target.value});       
   }                                                               //const { name, value } = e.target;
@@ -95,23 +119,33 @@ const {setUser} = useAuth()
           >Sent OTP</button>
         )}
 
+        {/* <div>
+          {counter && <p>Time Left: {timeLeft}s</p>}
+          <button disabled={timeLeft>0}
+            onClick={handleResendOtp}
+             type="button"
+             className="bg-[#000000] text-white p-2 rounded"
+            >Resend OTP</button>
+        </div> */}
+
        {otpSent && !otpVerified && (
        <>
+
          <input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)}
          className="w-full p-2 mb-4 border rounded"
          />
+          <div>
+          {counter && <p>Time Left: {timeLeft}s</p>}
+          <button disabled={timeLeft>0}
+            onClick={handleResendOtp}
+             type="button"
+             className="bg-[#000000] text-white p-2 rounded"
+            >Resend OTP</button>
+        </div>
+
          <button type="button" onClick={handleVerifyOtp} className=" text-white p-2 rounded bg-green-400 hover:cursor-pointer">Verify OTP</button>
         </>
         )}
-
-        {/* <input type="password" placeholder="Password" 
-        name="password"
-        className="w-full p-2 mb-4 border rounded" 
-        value={signupForm.password}
-        onChange={handleChange}
-        required/> */}
-
-
 
         {otpVerified && (
           <>

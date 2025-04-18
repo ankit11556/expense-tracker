@@ -20,18 +20,18 @@ exports.registerUser = async (req,res) => {
 
     await newUser.save();
   
-    redisClient.del(`verified:${email}`)
+   await redisClient.del(`verified:${email}`)
   
     //token generate
     const token = jwt.sign(
       {userId: newUser._id, name: newUser.name},
       process.env.JWT_KEY,
-      {expiresIn: 30}
+      {expiresIn: "1d"}
     );
 
     res.cookie("token",token,{
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "Strict",
       maxAge: 7 * 24 * 60 * 60 * 1000
     })
@@ -56,13 +56,21 @@ exports.sendOtp = async (req,res) => {
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ error: "Email already registered" });
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-     const otpExpiry = Date.now() + 10 * 60 * 1000;
+    const otpRecentlySent = await redisClient.get(`otpSent:${email}`);
+    if (otpRecentlySent) {
+       return res.status(429).json({ error: "OTP already sent. Please wait before resending." });
+    
+    }
 
-    redisClient.setEx(email,600,otp);
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    redisClient.setEx(email,120,otp);
+
+    await redisClient.setEx(`otpSent:${email}`,120,'true')
 
     await sendEmail(email,"Verify Your Email", `<h2>Your OTP is ${otp}</h2>`);
-    res.status(200).json({otp,otpExpiry,message: "OTP sent to your email"})
+
+    res.status(200).json({otp,message: "OTP sent to your email"})
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to send OTP" });
@@ -115,24 +123,28 @@ exports.logoutUser =  (req,res) => {
 exports.verifyOtp = async (req,res) => {
   try {
     const {email,otp} = req.body
-    console.log(email,otp);
 
+    if (!email || !otp) {
+      return res.status(400).json({ error: "Email and OTP are required" });
+    }
+    
     //redis
     const storedOtp = await redisClient.get(email); // Promise-style get
-
+   console.log(storedOtp);
+   
 
       if(!storedOtp){
         return res.status(400).json({error: "OTP has expired or not found" })
       }
 
-      if(storedOtp !== otp){
+      if(storedOtp !== otp.toString().trim()){
         return res.status(400).json({error: "Invalid OTP"})
       }
 
-      await redisClient.setEx(`verified:${email}`,600,'true');
+      await redisClient.setEx(`verified:${email}`,120,'true');
       await  redisClient.del(email);
 
-       res.status(200).json({ message: "OTP verified successfully" });
+      res.status(200).json({ message: "OTP verified successfully" });
     
   } catch (error) {
     console.error("Verification Error:", error);
