@@ -70,7 +70,7 @@ exports.sendOtp = async (req,res) => {
 
     await sendEmail(email,"Verify Your Email", `<h2>Your OTP is ${otp}</h2>`);
 
-    res.status(200).json({otp,message: "OTP sent to your email"})
+    res.status(200).json({otp,message: "OTP sent to your email. Please check inbox or spam folder."})
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to send OTP" });
@@ -97,7 +97,7 @@ exports.loginUser = async (req,res) => {
     const token = jwt.sign(
       {userId: user._id, email: user.email},
       process.env.JWT_KEY,
-      {expiresIn: 30}
+      {expiresIn: "1d"}
     );
 
     res.
@@ -130,9 +130,7 @@ exports.verifyOtp = async (req,res) => {
     
     //redis
     const storedOtp = await redisClient.get(email); // Promise-style get
-   console.log(storedOtp);
    
-
       if(!storedOtp){
         return res.status(400).json({error: "OTP has expired or not found" })
       }

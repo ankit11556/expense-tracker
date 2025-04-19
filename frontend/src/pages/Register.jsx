@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { createRegister, sendOtp, verifyOtp } from "../services/authApi"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext";
+import { FaCheckCircle } from "react-icons/fa";
 
 const Register = () =>{
 
@@ -119,18 +120,8 @@ const {setUser} = useAuth()
           >Sent OTP</button>
         )}
 
-        {/* <div>
-          {counter && <p>Time Left: {timeLeft}s</p>}
-          <button disabled={timeLeft>0}
-            onClick={handleResendOtp}
-             type="button"
-             className="bg-[#000000] text-white p-2 rounded"
-            >Resend OTP</button>
-        </div> */}
-
        {otpSent && !otpVerified && (
        <>
-
          <input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)}
          className="w-full p-2 mb-4 border rounded"
          />
@@ -149,7 +140,9 @@ const {setUser} = useAuth()
 
         {otpVerified && (
           <>
-          <span style={{ color: 'green' }}>Email Verified</span>
+          <span className="text-green-600 flex items-center gap-2">
+            <FaCheckCircle />
+            Email Verified</span>
           <input type="password" placeholder="Password" 
         name="password"
         className="w-full p-2 mb-4 border rounded" 
