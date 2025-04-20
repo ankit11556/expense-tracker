@@ -14,12 +14,24 @@ const userSchema = new mongoose.Schema({
 
   password: {
     type: String,
-    required: true
+    required: function () {
+      return this.authType === 'local'
+    },
   },
-  isVerified: { type: Boolean, default: false },
-  otp: { type: String },
-  otpExpiry: { type: Date },
-})
+
+  authType: {
+    type: String,
+    enum: ['local','google'],
+    default: 'local'
+  },
+
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  }
+ 
+},{timestamps: true})
 
 const User = mongoose.model('User',userSchema);
 
