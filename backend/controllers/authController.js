@@ -3,6 +3,56 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const sendEmail = require('../utils/sendEmail')
 const redisClient = require('../redisClient')
+const {OAuth2Client} = require('google-auth-library');
+
+//google login 
+
+const client = new OAuth2Client()
+
+exports.googleLogin = async (req,res) => {
+    const {tokenId} = req.body;
+
+    try {
+      const   ticket = await client.verifyIdToken({
+        idToken: tokenId,
+        audience : "hh",
+      });
+
+      const {email_verified,name,email,sub: googleId} = ticket.getPayload();
+
+      if (!email_verified) {
+       return res.status(400).json({ error: 'Email not verified by Google' });
+      }
+
+      let user = await User.findOne({email, authType: 'google'});
+
+      if (!user) {
+        user = await User.create({
+          name,
+          email,
+          googleId,
+          authType: 'google',
+          password: 'not-required'
+        })
+      }
+
+      const token = jwt.sign(
+        {userId: user._id},
+        process.env.JWT_KEY,
+        {expiresIn: '1d'}
+      );
+
+      res.status(200).json({token,user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        authType: user.authType
+      }})
+
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
 //Signup
 exports.registerUser = async (req,res) => {
