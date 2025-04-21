@@ -7,7 +7,7 @@ const {OAuth2Client} = require('google-auth-library');
 
 //google login 
 
-const client = new OAuth2Client()
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 exports.googleLogin = async (req,res) => {
     const {tokenId} = req.body;
@@ -15,7 +15,7 @@ exports.googleLogin = async (req,res) => {
     try {
       const   ticket = await client.verifyIdToken({
         idToken: tokenId,
-        audience : "hh",
+        audience : process.env.GOOGLE_CLIENT_ID,
       });
 
       const {email_verified,name,email,sub: googleId} = ticket.getPayload();
@@ -42,7 +42,14 @@ exports.googleLogin = async (req,res) => {
         {expiresIn: '1d'}
       );
 
-      res.status(200).json({token,user: {
+      res.cookie("token",token,{
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000
+      })
+      res.status(200).json({token,
+        user: {
         id: user._id,
         name: user.name,
         email: user.email,
