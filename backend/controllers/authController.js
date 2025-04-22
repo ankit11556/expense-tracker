@@ -11,12 +11,15 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 exports.googleLogin = async (req,res) => {
     const {tokenId} = req.body;
-
+    console.log("Received Token:", tokenId);
     try {
       const   ticket = await client.verifyIdToken({
         idToken: tokenId,
         audience : process.env.GOOGLE_CLIENT_ID,
       });
+
+      
+console.log(ticket.getPayload())
 
       const {email_verified,name,email,sub: googleId} = ticket.getPayload();
 
@@ -39,15 +42,17 @@ exports.googleLogin = async (req,res) => {
       const token = jwt.sign(
         {userId: user._id},
         process.env.JWT_KEY,
-        {expiresIn: '1d'}
+        {expiresIn: "1d"}
       );
 
       res.cookie("token",token,{
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        sameSite: "Lax",
+        secure: false,
         maxAge: 7 * 24 * 60 * 60 * 1000
       })
+      console.log("Generated Token:", token);
+
       res.status(200).json({token,
         user: {
         id: user._id,
@@ -85,11 +90,11 @@ exports.registerUser = async (req,res) => {
       process.env.JWT_KEY,
       {expiresIn: "1d"}
     );
-
+    console.log("Generated Token:", token);
     res.cookie("token",token,{
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
+      sameSite: "Lax",
+      secure: false,
       maxAge: 7 * 24 * 60 * 60 * 1000
     })
     res.status(201).json({message: "Registration Successfully.",
@@ -160,8 +165,8 @@ exports.loginUser = async (req,res) => {
     res.
     cookie("token",token,{
       httpOnly:true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite : "strict",
+      sameSite: "Lax",
+      secure: false,
       maxAge: 24*60*60*1000
     }).
     status(200).json({message: "Login successful",token})
