@@ -11,7 +11,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 exports.googleLogin = async (req,res) => {
     const {tokenId} = req.body;
-    console.log("Received Token:", tokenId);
+    
     try {
       const   ticket = await client.verifyIdToken({
         idToken: tokenId,
@@ -51,9 +51,10 @@ console.log(ticket.getPayload())
         secure: false,
         maxAge: 7 * 24 * 60 * 60 * 1000
       })
-      console.log("Generated Token:", token);
+      
 
       res.status(200).json({token,
+        message: 'Google login successful',
         user: {
         id: user._id,
         name: user.name,
@@ -71,10 +72,11 @@ exports.registerUser = async (req,res) => {
   try {
     const {name, email, password} = req.body;
 
-    redisClient.get(`verified:${email}`,async (err,isVrified) => {
-      if(err || !isVrified)
-        return res.status(400).json({error: "Please verify your email first"})
-    })
+    const isVerified = await redisClient.get(`verified:${email}`);
+    if (!isVerified) {
+      return res.status(400).json({ error: "Please verify your email first" });
+    }
+    
  
     const hashedPassword = await bcrypt.hash(password,10);
 
