@@ -16,12 +16,9 @@ const Navbar = () =>{
     </li>
 
     <li className="hover:bg-[#006666] px-3 py-2 rounded transition-colors duration-200">
-      <Link to="/all-transactions">All Transactions</Link>
+      <Link to="/all-transactions">My Transactions</Link>
     </li>
 
-    <li className="hover:bg-[#006666] px-3 py-2 rounded transition-colors duration-200">
-      <Link to="/total">Total Balance</Link>
-    </li>
   </ul>
 
 <div className="gap-4 flex">
