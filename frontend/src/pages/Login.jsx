@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { googleLogin, loginUser } from "../services/authApi";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const Login = () =>{
   useEffect(() => {
     const script = document.createElement("script");
@@ -94,10 +94,21 @@ const Login = () =>{
         required
       />
 
-      <button className="w-full bg-[#008080] text-white p-2 rounded" type="submit">
+      <button className="w-full bg-[#008080] text-white p-2 rounded hover:cursor-pointer hover:bg-[#008080bb]" type="submit ">
         Login
       </button>
-      <div className="mt-4 text-center" id="googleLoginBtn"></div>
+      
+      <div className="mt-4 text-center">
+        <p className="text-sm text-gray-600 mb-2">Or login with Google</p>
+        <div id="googleLoginBtn" className="flex justify-center"></div>
+     </div>
+
+      <p className="mt-4 text-center text-sm text-gray-600">
+      Don't have an account?{" "}
+      <Link to="/signup" className="text-[#008080] font-medium hover:underline">
+        Sign up
+      </Link>
+    </p>
     </form>
   </div>
   )

@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom"
 import { useLocation } from "react-router-dom";
 import { updateTransaction } from "../services/Api";
 
-const AddExpensePage = () => {
+const AddTransactionPage = () => {
   const navigate = useNavigate()
   const location = useLocation();
 
@@ -128,4 +128,4 @@ useEffect(() => {
   );
 };
 
-export default AddExpensePage;
+export default AddTransactionPage;

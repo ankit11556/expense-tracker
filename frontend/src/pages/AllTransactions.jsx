@@ -40,56 +40,62 @@ const handleDelete = async (id) =>{
   const totalBalance = income - expense;
   return(
     <div className="min-h-screen p-8 bg-gray-100 ">
-      <div  className="mb-8">
-        <h1 className="text-3xl font-bold">Total Balance: ₹{totalBalance}</h1>
+      <div  className="mb-6">
+        <h1 className="text-3xl font-bold ">Total Balance: ₹{totalBalance}</h1>
       </div>
 
-      <div  className="mt-4 flex justify-between">
-        <p className="text-green-600 font-semibold">Income: ₹{income}</p>
-        <p className="text-red-600 font-semibold">Expense: ₹{expense}</p>
+      <div  className=" flex justify-between p-4 rounded shadow mb-8 bg-white">
+        <p className="text-green-600 font-semibold text-lg">Income: ₹{income}</p>
+        <p className="text-red-600 font-semibold text-lg">Expense: ₹{expense}</p>
       </div>
 
-        <h2 className="text-2xl font-bold mb-4 ">Recent Transactions</h2>
-        <div className="w-full flex justify-center flex-col">
-      <table className="w-auto bg-white shadow-md rounded-lg overflow-hidden">
-        <thead className="bg-gray-200 ">
-          <tr className="">
-            <th className="p-4 text-center min-w-[120px]">Date</th>
-            <th className="p-4 text-center min-w-[120px]">Amount</th>
-            <th className="p-4 text-center min-w-[120px]">Category</th>
-            <th className="p-4 text-center min-w-[120px]">Type</th>
-            <th className="p-4 text-center min-w-[120px]">Note</th>
-          </tr>
-        </thead>
-        <tbody >
-      {transactions.map((transaction)=>(
-         <tr key={transaction._id} className="border-b">
-          <td  className="p-4 text-center">{new Date(transaction.date).toLocaleDateString('en-US')}</td>
-          <td  className="p-4 text-center ">₹{transaction.amount}</td>
-          <td  className="p-4 text-center">{transaction.category}</td>
-          <td  className="p-4 text-center">{transaction.type}</td>
-          <td  className="p-4 text-center">{transaction.note}</td>
-          
-          <td className="p-4 flex gap-4">
-            <button
-              onClick={() => navigate("/add", { state: { transaction: transaction } })} 
-              className=  "bg-blue-500 text-white px-2 py-2 ml-4 rounded hover:cursor-pointer hover:bg-blue-400"
-            >
-              Edit
-            </button>
+        <div className="mb-2">
+        <h2 className="text-2xl font-bold text-gray-800">Recent Transactions</h2>
+        </div>
 
-            <button
-              onClick={() => handleDelete(transaction._id)}
-              className="bg-red-500 text-white px-4 py-2 rounded hover:cursor-pointer hover:bg-red-400"
-            >
-              Delete
-            </button>
-          </td>
+  <div className="p-6 sm:p-8 md:p-12">
+  <div className="overflow-x-auto rounded-xl shadow-lg">
+    <table className="w-full table-auto bg-white rounded-xl overflow-hidden">
+      <thead className="bg-gray-100 text-[#333]">
+        <tr>
+          <th className="p-4 text-center min-w-[140px] font-semibold text-sm tracking-wide uppercase">Date</th>
+          <th className="p-4 text-center min-w-[140px] font-semibold text-sm tracking-wide uppercase">Amount</th>
+          <th className="p-4 text-center min-w-[140px] font-semibold text-sm tracking-wide uppercase">Category</th>
+          <th className="p-4 text-center min-w-[140px] font-semibold text-sm tracking-wide uppercase">Type</th>
+          <th className="p-4 text-center min-w-[180px] font-semibold text-sm tracking-wide uppercase">Note</th>
+          <th className="p-4 text-center min-w-[180px] font-semibold text-sm tracking-wide uppercase">Actions</th>
         </tr>
-     ) )}
-     </tbody>
-      </table>
-      </div>
+      </thead>
+      <tbody className="divide-y divide-gray-200">
+        {transactions.map((transaction) => (
+          <tr key={transaction._id} className="hover:bg-gray-50">
+            <td className="p-4 text-center">{new Date(transaction.date).toLocaleDateString('en-US')}</td>
+            <td className="p-4 text-center">₹{transaction.amount}</td>
+            <td className="p-4 text-center">{transaction.category}</td>
+            <td className="p-4 text-center">{transaction.type}</td>
+            <td className="p-4 text-center">{transaction.note}</td>
+            <td className="p-4 text-center">
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={() => navigate("/add", { state: { transaction: transaction } })}
+                  className="bg-blue-600 text-white px-3 py-2 rounded-lg shadow hover:bg-blue-500 transition duration-200"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(transaction._id)}
+                  className="bg-red-600 text-white px-3 py-2 rounded-lg shadow hover:bg-red-500 transition duration-200"
+                >
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
     </div>
   )
 }

@@ -18,9 +18,6 @@ exports.googleLogin = async (req,res) => {
         audience : process.env.GOOGLE_CLIENT_ID,
       });
 
-      
-console.log(ticket.getPayload())
-
       const {email_verified,name,email,sub: googleId} = ticket.getPayload();
 
       if (!email_verified) {
@@ -92,7 +89,7 @@ exports.registerUser = async (req,res) => {
       process.env.JWT_KEY,
       {expiresIn: "1d"}
     );
-    console.log("Generated Token:", token);
+   
     res.cookie("token",token,{
       httpOnly: true,
       sameSite: "Lax",
