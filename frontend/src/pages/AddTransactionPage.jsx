@@ -114,13 +114,13 @@ useEffect(() => {
           type="submit"
           className="w-full bg-[#008080] text-white p-2 rounded hover:bg-[#006666] hover:cursor-pointer"
         >
-          Edit Expense
+          Edit Transaction
         </button>):(
         <button
           type="submit"
           className="w-full bg-[#008080] text-white p-2 rounded hover:bg-[#006666] hover:cursor-pointer"
         >
-          Add Expense
+          Add Transaction
         </button>
 )}
       </form>
