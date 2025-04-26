@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
-const cors = require('cors')
-const transactionRouter = require('./routes/transactionRoutes')
-const authRouter = require('./routes/authRoutes')
-const cookieParser = require("cookie-parser");
-const userRouter = require('./routes/userRoutes')
 
 require('dotenv').config()
+
 require('./config/db')
+require('./config/redisClient')
+
+const cors = require('cors')
+const cookieParser = require("cookie-parser");
 
 app.use(cookieParser())
 app.use(cors({
@@ -17,13 +17,13 @@ app.use(cors({
 
 app.use(express.json())
 
+const transactionRouter = require('./routes/transactionRoutes')
+const authRouter = require('./routes/authRoutes')
+const userRouter = require('./routes/userRoutes')
+
 app.use("/api/user",userRouter)
 app.use('/api/auth',authRouter)
 app.use('/api/transactions',transactionRouter);
-
-app.get("/",(req,res)=>{
-  res.send('hello word')
-})
 
 const PORT = process.env.PORT
 app.listen(PORT,()=>{

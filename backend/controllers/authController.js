@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const sendEmail = require('../utils/sendEmail')
-const redisClient = require('../redisClient')
+const redisClient = require('../config/redisClient')
 const {OAuth2Client} = require('google-auth-library');
 
 //google login 
