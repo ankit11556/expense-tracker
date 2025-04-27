@@ -4,11 +4,19 @@ import {useNavigate} from "react-router-dom"
 
 const AllTransactions = () =>{
   const [transactions,setTransactions] = useState([]);
+  const [noData, setNoData] = useState(false);
+
   const navigate = useNavigate()
   const fetchData = async () => {
     try {
       const response = await getTransactions()
-      setTransactions(response.data);    
+       
+      if (response.data.length === 0) {
+        setNoData(true);
+      }else{
+        setTransactions(response.data)
+        setNoData(false);
+      }
     } catch (error) {
       console.log(error.response?.data?.error);
     }
@@ -67,7 +75,10 @@ const handleDelete = async (id) =>{
         </tr>
       </thead>
       <tbody className="divide-y divide-gray-200">
-        {transactions.map((transaction) => (
+        {noData ?(
+          <div className="text-center py-3">No data found</div>
+        ):(
+        transactions.map((transaction) => (
           <tr key={transaction._id} className="hover:bg-gray-50">
             <td className="p-4 text-center">{new Date(transaction.date).toLocaleDateString('en-US')}</td>
             <td className="p-4 text-center">₹{transaction.amount}</td>
@@ -91,7 +102,8 @@ const handleDelete = async (id) =>{
               </div>
             </td>
           </tr>
-        ))}
+        ))
+      )}
       </tbody>
     </table>
   </div>

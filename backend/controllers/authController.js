@@ -45,8 +45,8 @@ exports.googleLogin = async (req,res) => {
       res.cookie("token",token,{
         httpOnly: true,
         sameSite: "Lax",
-        secure: false,
-        maxAge: 7 * 24 * 60 * 60 * 1000
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000
       })
       
 
@@ -93,8 +93,8 @@ exports.registerUser = async (req,res) => {
     res.cookie("token",token,{
       httpOnly: true,
       sameSite: "Lax",
-      secure: false,
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000
     })
     res.status(201).json({message: "Registration Successfully.",
       user: {
@@ -165,7 +165,7 @@ exports.loginUser = async (req,res) => {
     cookie("token",token,{
       httpOnly:true,
       sameSite: "Lax",
-      secure: false,
+      secure: process.env.NODE_ENV === 'production',
       maxAge: 24*60*60*1000
     }).
     status(200).json({message: "Login successful",token})
