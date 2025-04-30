@@ -36,7 +36,6 @@ const Login = () =>{
     try {
       
       const tokenId = response.credential;
-      console.log("Generated tokenId:", tokenId);
       const data = await googleLogin(tokenId)
 
       setUser(data);

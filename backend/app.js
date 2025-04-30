@@ -6,6 +6,8 @@ if (process.env.NODE_ENV === 'production') {
   app.use(morgan('combined'));
 }
 
+const path = require('path')
+
 require('dotenv').config()
 
 require('./config/db')
@@ -42,6 +44,16 @@ const userRouter = require('./routes/userRoutes')
 app.use("/api/user",userRouter)
 app.use('/api/auth',authRouter)
 app.use('/api/transactions',transactionRouter);
+
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', "script-src 'self' https://accounts.google.com;");
+  next();
+});
+
+app.use(express.static(path.join(__dirname, '..',"frontend","dist")));
+app.get("*",(req,res)=>{
+  res.sendFile(path.resolve(__dirname, '..',"frontend","dist","index.html"))
+})
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
