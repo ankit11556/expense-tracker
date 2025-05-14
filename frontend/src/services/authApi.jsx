@@ -45,5 +45,6 @@ export const googleLogin = async (tokenId) => {
       {tokenId},
       {withCredentials: true}
    );
+   console.log("Backend response:", response.data)
    return response.data
 }

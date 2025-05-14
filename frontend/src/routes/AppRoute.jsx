@@ -9,8 +9,6 @@ import PrivateRoute from "../components/PrivateRoute"
 
 const AppRoutes = () =>{
   return(
-
- 
  <>   
   <Navbar></Navbar>
     <Routes>
@@ -20,7 +18,6 @@ const AppRoutes = () =>{
       <Route path="/signup" element={<Register/>}></Route>
       <Route path="/login" element={<Login/>}></Route>
     </Routes>
-   
   </>
 
   )

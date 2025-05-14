@@ -29,7 +29,7 @@ const handleDelete = async (id) =>{
     const transaction_Delete = transactions.filter((transaction)=> transaction._id !== id)
     setTransactions(transaction_Delete)
   } catch (error) {
-    
+     console.log(error.response?.data?.error);
   }
 }
   

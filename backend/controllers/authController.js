@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const sendEmail = require('../utils/sendEmail')
 const redisClient = require('../config/redisClient')
 const {OAuth2Client} = require('google-auth-library');
+require('dotenv').config()
 
 //google login 
 
@@ -45,7 +46,7 @@ exports.googleLogin = async (req,res) => {
       res.cookie("token",token,{
         httpOnly: true,
         sameSite: "Lax",
-        secure: process.env.NODE_ENV === 'production',
+        secure:  false,                             //process.env.NODE_ENV === 'production',
         maxAge: 24 * 60 * 60 * 1000
       })
       

@@ -4,13 +4,15 @@ import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 const Login = () =>{
   useEffect(() => {
+    console.log("useEffect triggered")
+    console.log(window.location.origin)
     const script = document.createElement("script");
     script.src = "https://accounts.google.com/gsi/client";
     script.async = true;
     script.defer = true;
   
     script.onload = () => {
-     
+      console.log("Google Sign-In script loaded successfully")
       google.accounts.id.initialize({
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
         callback: handleGoogleResponse,
@@ -33,10 +35,12 @@ const Login = () =>{
   }, []);
 
   const handleGoogleResponse = async (response) => {
+    console.log("Google login response received:", response); // 
     try {
-      
       const tokenId = response.credential;
+      console.log("Google token received:", tokenId)
       const data = await googleLogin(tokenId)
+      console.log("Data from backend:", data)
 
       setUser(data);
       alert(data.message);
