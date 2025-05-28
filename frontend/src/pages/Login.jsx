@@ -1,55 +1,8 @@
 import { useEffect, useState } from "react";
-import { googleLogin, loginUser } from "../services/authApi";
+import {  loginUser } from "../services/authApi";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 const Login = () =>{
-  useEffect(() => {
-    console.log("useEffect triggered")
-    console.log(window.location.origin)
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-  
-    script.onload = () => {
-      console.log("Google Sign-In script loaded successfully")
-      google.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-        callback: handleGoogleResponse,
-      });
-      google.accounts.id.renderButton(
-        document.getElementById("googleLoginBtn"),
-        { theme: "outline", size: "large" }
-      );
-    };
-  
-    script.onerror = () => {
-      console.error("❌ Failed to load Google script");
-    };
-  
-    document.body.appendChild(script);
-  
-    return () => {
-      document.body.removeChild(script); // cleanup
-    };
-  }, []);
-
-  const handleGoogleResponse = async (response) => {
-    console.log("Google login response received:", response); // 
-    try {
-      const tokenId = response.credential;
-      console.log("Google token received:", tokenId)
-      const data = await googleLogin(tokenId)
-      console.log("Data from backend:", data)
-
-      setUser(data);
-      alert(data.message);
-      navigate("/add")
-    } catch (error) {
-      console.error(error);
-    alert(error.response?.data?.error || "Google login failed");
-    }
-  }
 
   const navigate = useNavigate()
   const [form, setform] = useState({
@@ -100,11 +53,7 @@ const Login = () =>{
       <button className="w-full bg-[#008080] text-white p-2 rounded hover:cursor-pointer hover:bg-[#008080bb]" type="submit ">
         Login
       </button>
-      
-      <div className="mt-4 text-center">
-        <p className="text-sm text-gray-600 mb-2">Or login with Google</p>
-        <div id="googleLoginBtn" className="flex justify-center"></div>
-     </div>
+
 
       <p className="mt-4 text-center text-sm text-gray-600">
       Don't have an account?{" "}

@@ -3,67 +3,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const sendEmail = require('../utils/sendEmail')
 const redisClient = require('../config/redisClient')
-const {OAuth2Client} = require('google-auth-library');
 require('dotenv').config()
-
-//google login 
-
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
-
-exports.googleLogin = async (req,res) => {
-    const {tokenId} = req.body;
-    
-    try {
-      const   ticket = await client.verifyIdToken({
-        idToken: tokenId,
-        audience : process.env.GOOGLE_CLIENT_ID,
-      });
-
-      const {email_verified,name,email,sub: googleId} = ticket.getPayload();
-
-      if (!email_verified) {
-       return res.status(400).json({ error: 'Email not verified by Google' });
-      }
-
-      let user = await User.findOne({email, authType: 'google'});
-
-      if (!user) {
-        user = await User.create({
-          name,
-          email,
-          googleId,
-          authType: 'google',
-          password: 'not-required'
-        })
-      }
-
-      const token = jwt.sign(
-        {userId: user._id},
-        process.env.JWT_KEY,
-        {expiresIn: "1d"}
-      );
-
-      res.cookie("token",token,{
-        httpOnly: true,
-        sameSite: "Lax",
-        secure:  false,                             //process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000
-      })
-      
-
-      res.status(200).json({token,
-        message: 'Google login successful',
-        user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        authType: user.authType
-      }})
-
-    } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-}
 
 //Signup
 exports.registerUser = async (req,res) => {

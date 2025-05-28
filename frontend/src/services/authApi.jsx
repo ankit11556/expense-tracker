@@ -38,13 +38,3 @@ export const verifyOtp = async ({email,otp}) => {
    return await axios.post(`${API_URL}/user/verify-otp`,{email,otp}
 )
 }
-
-export const googleLogin = async (tokenId) => {
-   console.log("Sending token to backend:", tokenId);
-   const response = await axios.post(`${API_URL}/auth/google-login`,
-      {tokenId},
-      {withCredentials: true}
-   );
-   console.log("Backend response:", response.data)
-   return response.data
-}
